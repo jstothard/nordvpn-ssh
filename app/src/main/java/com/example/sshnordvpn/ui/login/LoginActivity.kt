@@ -2,7 +2,6 @@ package com.example.sshnordvpn.ui.login
 
 import android.app.Activity
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
 import android.os.Bundle
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
@@ -14,6 +13,7 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.ProgressBar
 import android.widget.Toast
+import androidx.lifecycle.ViewModelProvider
 
 import com.example.sshnordvpn.R
 
@@ -25,13 +25,13 @@ class LoginActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         setContentView(R.layout.activity_login)
-
+        val ipAddress = findViewById<EditText>(R.id.ip_address)
         val username = findViewById<EditText>(R.id.username)
         val password = findViewById<EditText>(R.id.password)
         val login = findViewById<Button>(R.id.login)
         val loading = findViewById<ProgressBar>(R.id.loading)
 
-        loginViewModel = ViewModelProviders.of(this, LoginViewModelFactory())
+        loginViewModel = ViewModelProvider(this, LoginViewModelFactory())
                 .get(LoginViewModel::class.java)
 
         loginViewModel.loginFormState.observe(this@LoginActivity, Observer {
@@ -40,6 +40,9 @@ class LoginActivity : AppCompatActivity() {
             // disable login button unless both username / password is valid
             login.isEnabled = loginState.isDataValid
 
+            if (loginState.ipAddressError != null) {
+                ipAddress.error = getString(loginState.ipAddressError)
+            }
             if (loginState.usernameError != null) {
                 username.error = getString(loginState.usernameError)
             }
@@ -64,18 +67,28 @@ class LoginActivity : AppCompatActivity() {
             finish()
         })
 
+        ipAddress.afterTextChanged {
+            loginViewModel.loginDataChanged(
+                ipAddress.text.toString(),
+                username.text.toString(),
+                password.text.toString()
+            )
+        }
+
         username.afterTextChanged {
             loginViewModel.loginDataChanged(
-                    username.text.toString(),
-                    password.text.toString()
+                ipAddress.text.toString(),
+                username.text.toString(),
+                password.text.toString()
             )
         }
 
         password.apply {
             afterTextChanged {
                 loginViewModel.loginDataChanged(
-                        username.text.toString(),
-                        password.text.toString()
+                    ipAddress.text.toString(),
+                    username.text.toString(),
+                    password.text.toString()
                 )
             }
 
@@ -83,8 +96,9 @@ class LoginActivity : AppCompatActivity() {
                 when (actionId) {
                     EditorInfo.IME_ACTION_DONE ->
                         loginViewModel.login(
-                                username.text.toString(),
-                                password.text.toString()
+                            ipAddress.text.toString(),
+                            username.text.toString(),
+                            password.text.toString()
                         )
                 }
                 false
@@ -92,7 +106,7 @@ class LoginActivity : AppCompatActivity() {
 
             login.setOnClickListener {
                 loading.visibility = View.VISIBLE
-                loginViewModel.login(username.text.toString(), password.text.toString())
+                loginViewModel.login(ipAddress.text.toString(), username.text.toString(), password.text.toString())
             }
         }
     }
