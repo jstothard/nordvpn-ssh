@@ -12,20 +12,23 @@
     tools:context=".ui.login.LoginActivity">
 
     <EditText
-        android:id="@+id/hostname"
+        android:id="@+id/ip_address"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
         android:layout_marginLeft="24dp"
-        android:layout_marginTop="92dp"
+        android:layout_marginTop="96dp"
         android:layout_marginEnd="24dp"
         android:layout_marginRight="24dp"
         android:ems="10"
-        android:inputType="textUri"
-        android:hint="@string/prompt_hostname"
+        android:hint="@string/prompt_ip_address"
+        android:inputType="numberDecimal"
+        android:digits="0123456789."
+        android:selectAllOnFocus="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        android:importantForAutofill="no" />
 
 
     <EditText
@@ -38,9 +41,10 @@
         android:hint="@string/prompt_username"
         android:inputType="textEmailAddress"
         android:selectAllOnFocus="true"
+        android:autofillHints="username"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/hostname" />
+        app:layout_constraintTop_toBottomOf="@+id/ip_address" />
 
     <EditText
         android:id="@+id/password"
@@ -54,9 +58,11 @@
         android:imeOptions="actionDone"
         android:inputType="textPassword"
         android:selectAllOnFocus="true"
+        android:autofillHints="password"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/username" />
+        app:layout_constraintTop_toBottomOf="@+id/username"
+ />
 
     <Button
         android:id="@+id/login"
